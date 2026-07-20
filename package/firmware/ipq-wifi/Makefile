@@ -13,6 +13,14 @@ PKG_FLAGS:=nonshared
 
 include $(INCLUDE_DIR)/package.mk
 
+# Board files that are not (yet) part of qca-wireless.git are kept next to
+# this Makefile and copied in here. Send them upstream so they can be dropped
+# again; see the note at the top of this file.
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(CP) ./board-*.* $(PKG_BUILD_DIR)/
+endef
+
 define Build/Compile
 endef
 
@@ -68,6 +76,7 @@ ALLWIFIBOARDS:= \
 	meraki_mr30h \
 	meraki_underdog \
 	meraki_z3 \
+	mikrotik_chateau-5g-r17-ax \
 	netgear_lbr20 \
 	netgear_rax120v2 \
 	netgear_rbk20 \
@@ -265,6 +274,7 @@ $(eval $(call generate-ipq-wifi-package,linksys_whw03,Linksys WHW03))
 $(eval $(call generate-ipq-wifi-package,meraki_mr30h,Meraki MR30H))
 $(eval $(call generate-ipq-wifi-package,meraki_underdog,Meraki underdog))
 $(eval $(call generate-ipq-wifi-package,meraki_z3,Meraki Z3))
+$(eval $(call generate-ipq-wifi-package,mikrotik_chateau-5g-r17-ax,MikroTik S53UG+5HaxD2HaxD&RG650E-EU (Chateau 5G R17 ax)))
 $(eval $(call generate-ipq-wifi-package,netgear_lbr20,Netgear LBR20))
 $(eval $(call generate-ipq-wifi-package,netgear_rax120v2,Netgear RAX120v2))
 $(eval $(call generate-ipq-wifi-package,netgear_rbk20,Netgear RBK20))
