@@ -19,6 +19,11 @@ ipq60xx_setup_interfaces()
 	alfa-network,ap120c-ax)
 		ucidef_set_interfaces_lan_wan "lan" "wan"
 		;;
+	mikrotik,chateau-5g-r17-ax)
+		# 4x 1G (QCA8075-Quad) + 1x 2,5G (QCA8081), alle am internen IPQ-PPE-Switch.
+		# Kein dedizierter WAN-Port — der Uplink ist das RG650E-Modem (wwan0).
+		ucidef_set_interface_lan "lan1 lan2 lan3 lan4 lan5"
+		;;
 	cambiumnetworks,xe3-4|\
 	netgear,rbs350)
 		ucidef_set_interface_lan "lan1 lan2" "dhcp"

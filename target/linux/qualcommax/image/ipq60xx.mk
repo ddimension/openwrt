@@ -35,6 +35,69 @@ define Device/8devices_mango-dvk
 endef
 TARGET_DEVICES += 8devices_mango-dvk
 
+# RouterBOOT only loads bare ARM64 ELF images, not FIT, and the yaffs kernel
+# partition is just 8 MiB while the raw kernel is around 14 MiB. The kernel is
+# therefore wrapped in a self-extracting LZMA loader; see
+# image/mikrotik-lzma-loader.
+define Build/mikrotik-lzma-loader
+	# Compress $@ (the file currently travelling through the pipe) rather than
+	# $(IMAGE_KERNEL): the latter picks the wrong, larger image on squashfs
+	# builds. Write via a temporary file because $@ is both source and target.
+	$(MAKE) -C $(TOPDIR)/target/linux/qualcommax/image/mikrotik-lzma-loader \
+		KERNEL_IMAGE="$@" \
+		DTB="$(KERNEL_BUILD_DIR)/image-$(DEVICE_DTS).dtb" \
+		OUTPUT="$@.loader" \
+		BUILD="$@.build" \
+		TARGET_CC="$(TARGET_CC)" \
+		STAGING_DIR_HOST="$(STAGING_DIR_HOST)"
+	mv "$@.loader" "$@"
+	rm -rf "$@.build"
+endef
+
+# Temporary diagnostic tools for bring-up. Remove before the image is
+# considered final; none of these belong in a shipped build.
+#   ip-full/bridge: BusyBox ip cannot do "ip -br" or bridge inspection
+#   coreutils-stat: BusyBox has no stat
+#   iperf3:         throughput measured over ssh is limited by dropbear, not
+#                   by the link
+#   usb-net drivers: fallback path over a USB NIC when onboard Ethernet is
+#                   unusable
+# pciutils is deliberately absent: PCIe is disabled in the DTS, so there is
+# nothing to enumerate.
+CHATEAU_DEBUG_PACKAGES := tcpdump ip-full ip-bridge usbutils ethtool iperf3 \
+	coreutils-stat nand-utils \
+	kmod-usb-net kmod-usb-net-asix kmod-usb-net-asix-ax88179 \
+	kmod-usb-net-rtl8152
+
+define Device/mikrotik_chateau-5g-r17-ax
+	$(call Device/UbiFit)
+	KERNEL := kernel-bin | mikrotik-lzma-loader
+	KERNEL_INITRAMFS := kernel-bin | mikrotik-lzma-loader
+	DEVICE_VENDOR := MikroTik
+	DEVICE_MODEL := Chateau 5G R17 ax
+	SOC := ipq6010
+	DEVICE_DTS := ipq6010-mikrotik-chateau-5g-r17
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	# yafut: required by sysupgrade. The kernel partition is yaffs, whose
+	#   metadata and ECC live in the OOB area, so "mtd write" cannot be used.
+	# qmi-advanced: netifd protocol for the built-in Quectel RG650E-EU
+	#   (2c7c:0122, QMI/RMNET). uqmi on its own only gets a client ID for
+	#   UIM on this module; DMS/NAS/WDS fail with "Failed to connect to
+	#   service". qmi-advanced allocates the client IDs with qmicli and hands
+	#   them to uqmi, brings the modem out of low-power mode and sets up the
+	#   QMAP multiplexing that 5G modules need.
+	# kmod-usb-serial-option: AT ports of the modem, used for at_init/comgt.
+	# ath11k-board-mikrotik-chateau: board-2.bin carrying the qmi-board-id=255
+	#   entry this device asks for; without it 5 GHz reports no HT support.
+	# The USB basics (kmod-usb3, kmod-usb-dwc3, kmod-usb-dwc3-qcom) are
+	# already DEFAULT_PACKAGES of the target and are not repeated here.
+	DEVICE_PACKAGES := kmod-usb-net-qmi-wwan kmod-usb-serial-option \
+		qmi-advanced yafut ath11k-board-mikrotik-chateau \
+		$(CHATEAU_DEBUG_PACKAGES)
+endef
+TARGET_DEVICES += mikrotik_chateau-5g-r17-ax
+
 define Device/alfa-network_ap120c-ax
 	$(call Device/FitImage)
 	$(call Device/UbiFit)
