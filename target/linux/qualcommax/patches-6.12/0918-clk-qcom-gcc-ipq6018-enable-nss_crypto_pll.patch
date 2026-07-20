@@ -1,0 +1,55 @@
+From: =?UTF-8?q?Andr=C3=A9=20Valentin?= <avalentin@marcant.net>
+Date: Mon, 20 Jul 2026 05:40:00 +0200
+Subject: clk: qcom: gcc-ipq6018: keep nss_crypto_pll enabled
+
+nss_crypto_clk_src can only reach its 300 MHz operating point through
+P_NSS_CRYPTO_PLL:
+
+	static const struct freq_tbl ftbl_nss_crypto_clk_src[] = {
+		F(24000000,  P_XO,             1, 0, 0),
+		F(300000000, P_NSS_CRYPTO_PLL, 2, 0, 0),
+		{ }
+	};
+
+The probe function configures nss_crypto_pll_main via
+clk_alpha_pll_configure(), but configuring a PLL does not enable it.
+Nothing else does either: of_clk_set_defaults() — which applies the
+assigned-clock-rates of the PPE node — only calls clk_set_rate() and
+never clk_prepare_enable(). The PLL therefore stays off, the RCG cannot
+switch to a source that is not running, and its update bit never clears:
+
+	nss_crypto_clk_src: rcg didn't update its configuration
+	WARNING: CPU: 2 PID: 1 at drivers/clk/qcom/clk-rcg2.c:133
+		update_config+0xac/0xc0
+	...
+	 clk_rcg2_set_rate_and_parent+0x2c/0x44
+	 of_clk_set_defaults+0x234/0x4c0
+	 qca_ppe_driver_init+0x1c/0x28
+
+On the QSDK boot chain the PLL is already running when Linux starts, so
+the problem does not show there. Booting the same SoC from a bootloader
+that does not pre-enable it (for example MikroTik RouterBOOT) exposes it
+on every boot.
+
+Mark the PLL critical so the clock framework enables it during
+registration, using the driver's own clk_alpha_pll_ops.enable() and thus
+the proper lock sequence. This keeps the NSS crypto clock usable instead
+of merely silencing the warning by dropping the rate assignment.
+
+The same approach is already used for gcc_xo_clk_src.
+
+Signed-off-by: =?UTF-8?q?Andr=C3=A9=20Valentin?= <avalentin@marcant.net>
+---
+ drivers/clk/qcom/gcc-ipq6018.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -254,6 +254,7 @@ static struct clk_alpha_pll nss_crypto_p
+ 				.fw_name = "xo",
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_alpha_pll_ops,
+ 		},
+ 	},

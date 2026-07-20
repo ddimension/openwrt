@@ -149,9 +149,15 @@
 			      "port4_rx", "port4_tx",
 			      "port5_rx", "port5_tx",
 			      "gcc_snoc_nssnoc_clk";
+		/*
+		 * nss_crypto_clk_src tops out at 300 MHz on IPQ6018; the 600 MHz
+		 * used before came from ipq8074-ess.dtsi. Reaching that rate also
+		 * requires nss_crypto_pll to be running, otherwise the RCG reports
+		 * "didn't update its configuration".
+		 */
 		assigned-clocks = <&gcc GCC_NSS_PPE_CLK>,
 				  <&gcc GCC_NSS_CRYPTO_CLK>;
-		assigned-clock-rates = <300000000>, <600000000>;
+		assigned-clock-rates = <300000000>, <300000000>;
 		resets = <&gcc GCC_PPE_FULL_RESET>,
 			 <&gcc GCC_NSSPORT1_RESET>,
 			 <&gcc GCC_NSSPORT2_RESET>,
