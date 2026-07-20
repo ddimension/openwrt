@@ -1,0 +1,7 @@
+#!/bin/sh
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+. /lib/functions.sh
+. /lib/netifd/netifd-proto.sh
+INCLUDE_ONLY=1
+. /lib/netifd/proto/qmi.sh
+proto_qmi_hotplug

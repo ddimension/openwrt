@@ -1,0 +1,15 @@
+# This file will be included
+# Verify type
+if [ "$DEVTYPE" != "wwan" ]; then
+	return 0
+fi
+
+# Verify driver
+DRIVER=$(readlink -f  /sys/$DEVPATH/device/driver)
+[ -n "$DRIVER" ] && DRIVER=$(basename $DRIVER)
+
+if [ "$DRIVER" == "cdc_mbim" ]; then
+	return 0
+fi
+
+/usr/sbin/qmi-hotplug </dev/null &

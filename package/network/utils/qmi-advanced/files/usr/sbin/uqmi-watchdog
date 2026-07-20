@@ -1,0 +1,74 @@
+#!/bin/sh
+. /lib/functions.sh
+. /lib/functions/network.sh
+. /usr/share/libubox/jshn.sh
+INCLUDE_ONLY=1
+. /lib/netifd/proto/qmi.sh
+set -o pipefail
+
+interface="$1"
+
+check_child() {
+	local interface="$1"
+	local proto_target="$2"
+	local keys
+	proto_target="dhcp"
+	json_init
+	json_load "$(ubus -v call uci get '{ "config": "network", "match": { "device": "@'${interface}'" } } }')"
+	json_select values
+	json_get_keys keys
+	for key in $keys; do
+		local name proto
+		[ -z "$key" ] && continue
+		json_select "$key"
+		json_get_vars up name proto
+		json_select ..
+		#echo Check: $name - $proto 1>&2
+		if network_is_up "$name"; then
+			return 0
+		fi
+		echo "Interface $name is not up." 1>&2
+		return 1
+	done
+	return 0
+}
+
+empty_serial_buffers() {
+	local ctldevice=$1
+	local devname=$(basename $ctldevice)
+	local device=$(echo /sys/class/usbmisc/${devname}/device/net/* | head -n1)
+	device=${device##*/}
+	local statedir="/tmp/qmi/${device}"
+	local dms_cid=$(cat $statedir/dms_cid)
+
+	local revision="$(proto_qmi_run_qmicli 45 -d $ctldevice --client-cid "$dms_cid" --client-no-release-cid  --dms-get-revision)"
+
+	if echo "$revision" | grep M9200B >/dev/null; then
+		local DEVPATH=$(readlink -f /sys/class/usbmisc/$devname/device)
+		local DEVICES="$(find ${DEVPATH%.*}.*/ttyUSB* -maxdepth 0 -mindepth 0 |head -n2 )"
+		if [ -z "$DEVICES" ]; then
+			echo No tty devices found for $dev .
+			return 0
+		fi
+
+		local DEVICES_SHORT=
+		for i in $DEVICES; do
+			DEVICES_SHORT=${i##*/}
+		done
+
+		DEVICES_SHORT=$(echo $DEVICES_SHORT | tr \  \\n | sort | head -n2)
+		local n=0
+		for i in  ${DEVICES_SHORT}; do 
+			while read -t 1 line; do
+				let n+=1
+				#[ -n "$line" ] && echo "$i: $line"
+			done </dev/$i
+		done
+		return 0
+	fi
+	#echo Device $revision not supported
+	return 0
+}
+
+proto_qmi_watchdog "$interface"
+

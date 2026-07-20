@@ -1,0 +1,2 @@
+rm -f /lib/netifd/proto/qmi.sh
+ln -s /lib/netifd/proto/qmi-advanced.sh /lib/netifd/proto/qmi.sh
