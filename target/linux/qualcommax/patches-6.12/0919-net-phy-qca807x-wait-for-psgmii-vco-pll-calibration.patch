@@ -1,0 +1,127 @@
+From: =?UTF-8?q?Andr=C3=A9=20Valentin?= <avalentin@marcant.net>
+Subject: net: phy: qca807x: wait for PSGMII VCO PLL calibration
+
+The package init resets the PSGMII SerDes and then simply sleeps. That
+leaves the receive CDR running while the VCO PLL recalibrates, so it can
+lock onto a wrong sampling phase. The result is intermittent bit errors
+whose rate grows with frame length: no loss at 64 byte frames, heavy loss
+at 1500, and whether a boot comes up good or bad is a matter of chance.
+
+Reset the PSGMII side, poll the VCO PLL calibration status and hold the
+receive CDR frozen across the analog reset, mirroring what the ipq40xx
+qca8k driver does for the same PHY in psgmii_vco_calibrate().
+
+
+Signed-off-by: =?UTF-8?q?Andr=C3=A9=20Valentin?= <avalentin@marcant.net>
+---
+--- a/drivers/net/phy/qcom/qca807x.c
++++ b/drivers/net/phy/qcom/qca807x.c
+@@ -94,6 +94,19 @@
+ #define PQSGMII_TX_DRIVER_400MV				0xa
+ #define PQSGMII_TX_DRIVER_500MV				0xb
+ #define PQSGMII_TX_DRIVER_600MV				0xc
++/*
++ * PSGMII reset and VCO PLL calibration, see
++ * qca807x_phy_package_config_init_once().
++ */
++#define PQSGMII_BMCR_RX_20BIT				0x5b
++#define PQSGMII_BMCR_RESET				0x1b
++#define PQSGMII_BMCR_RUN				0x5f
++#define PQSGMII_CDR_FREEZE				0x2230
++#define PQSGMII_CDR_RELEASE				0x3230
++#define PQSGMII_VCO_CALIB_STATUS			0x28
++#define PQSGMII_VCO_CALIB_READY				BIT(0)
++#define PQSGMII_VCO_POLL_TRIES				100
++#define PQSGMII_SETTLE_SLEEP				200
+ #define PQSGMII_MODE_CTRL				0x6d
+ #define PQSGMII_MODE_CTRL_AZ_WORKAROUND_MASK		BIT(0)
+ #define PQSGMII_MMD3_SERDES_CONTROL			0x805a
+@@ -590,6 +603,66 @@
+ 	if (ret)
+ 		goto exit;
+ 
++	/*
++	 * Reset the PSGMII side of the package and wait for its VCO PLL to
++	 * lock, holding the RX path in 20 bit mode meanwhile.
++	 *
++	 * Simply asserting the analog reset and sleeping, as this code used to
++	 * do, leaves the receive CDR running while the PLL recalibrates. It can
++	 * then lock onto a wrong sampling phase, which shows up as intermittent
++	 * bit errors whose rate grows with frame length - fine at 64 bytes,
++	 * heavy packet loss at 1500. Whether a boot comes up good or bad is
++	 * then a matter of chance.
++	 *
++	 * The sequence mirrors what the ipq40xx qca8k driver does for the same
++	 * PHY (psgmii_vco_calibrate()).
++	 */
++	ret = __phy_package_write(phydev, QCA807X_PQSGMII_ADDR, MII_BMCR,
++				  PQSGMII_BMCR_RX_20BIT);
++	if (ret)
++		goto exit;
++
++	ret = __phy_package_write(phydev, QCA807X_PQSGMII_ADDR, MII_BMCR,
++				  PQSGMII_BMCR_RESET);
++	if (ret)
++		goto exit;
++
++	ret = __phy_package_write(phydev, QCA807X_PQSGMII_ADDR, MII_BMCR,
++				  PQSGMII_BMCR_RX_20BIT);
++	if (ret)
++		goto exit;
++
++	/* Wait for the VCO PLL calibration to report ready */
++	for (val = 0, ret = -ETIMEDOUT; val < PQSGMII_VCO_POLL_TRIES; val++) {
++		int stat = __phy_package_read_mmd(phydev, QCA807X_PQSGMII_ADDR,
++						  MDIO_MMD_PMAPMD,
++						  PQSGMII_VCO_CALIB_STATUS);
++
++		if (stat < 0) {
++			ret = stat;
++			break;
++		}
++
++		if (stat & PQSGMII_VCO_CALIB_READY) {
++			ret = 0;
++			break;
++		}
++
++		usleep_range(10000, 11000);
++	}
++	if (ret) {
++		phydev_err(phydev, "PSGMII VCO PLL calibration not ready\n");
++		goto exit;
++	}
++
++	msleep(SERDES_RESET_SLEEP);
++
++	/* Freeze the RX CDR across the analog reset */
++	ret = __phy_package_write(phydev, QCA807X_PQSGMII_ADDR, MII_RESV2,
++				  PQSGMII_CDR_FREEZE);
++	if (ret)
++		goto exit;
++
+ 	/* After mode change Serdes reset is required */
+ 	val = __phy_package_read(phydev, QCA807X_PQSGMII_ADDR,
+ 				 PQSGMII_CTRL_REG);
+@@ -609,6 +682,21 @@
+ 	if (ret)
+ 		goto exit;
+ 
++	msleep(SERDES_RESET_SLEEP);
++
++	/* Release the RX CDR and the 20 bit hold, then let the link settle */
++	ret = __phy_package_write(phydev, QCA807X_PQSGMII_ADDR, MII_RESV2,
++				  PQSGMII_CDR_RELEASE);
++	if (ret)
++		goto exit;
++
++	ret = __phy_package_write(phydev, QCA807X_PQSGMII_ADDR, MII_BMCR,
++				  PQSGMII_BMCR_RUN);
++	if (ret)
++		goto exit;
++
++	msleep(PQSGMII_SETTLE_SLEEP);
++
+ 	/* Workaround to enable AZ transmitting ability */
+ 	val = __phy_package_read_mmd(phydev, QCA807X_PQSGMII_ADDR,
+ 				     MDIO_MMD_PMAPMD, PQSGMII_MODE_CTRL);
