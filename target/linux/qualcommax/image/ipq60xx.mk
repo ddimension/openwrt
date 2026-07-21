@@ -67,14 +67,17 @@ endef
 CHATEAU_DEBUG_PACKAGES := tcpdump ip-full ip-bridge usbutils ethtool iperf3 \
 	coreutils-stat nand-utils \
 	kmod-usb-net kmod-usb-net-asix kmod-usb-net-asix-ax88179 \
-	kmod-usb-net-rtl8152
+	kmod-usb-net-rtl8152 \
+	luci luci-proto-mbim \
+	kmod-usb-net-cdc-mbim umbim mbim-utils \
+	kmod-vrf ip-full
 
 define Device/mikrotik_chateau-5g-r17-ax
 	$(call Device/UbiFit)
 	KERNEL := kernel-bin | mikrotik-lzma-loader
 	KERNEL_INITRAMFS := kernel-bin | mikrotik-lzma-loader
 	DEVICE_VENDOR := MikroTik
-	DEVICE_MODEL := Chateau 5G R17 ax
+	DEVICE_MODEL := S53UG+5HaxD2HaxD&RG650E-EU (Chateau 5G R17 ax)
 	SOC := ipq6010
 	DEVICE_DTS := ipq6010-mikrotik-chateau-5g-r17
 	BLOCKSIZE := 128k
@@ -93,7 +96,8 @@ define Device/mikrotik_chateau-5g-r17-ax
 	# The USB basics (kmod-usb3, kmod-usb-dwc3, kmod-usb-dwc3-qcom) are
 	# already DEFAULT_PACKAGES of the target and are not repeated here.
 	DEVICE_PACKAGES := kmod-usb-net-qmi-wwan kmod-usb-serial-option \
-		qmi-advanced yafut ath11k-board-mikrotik-chateau \
+		wwand luci-proto-wwand luci-app-wwand \
+		yafut ath11k-board-mikrotik-chateau \
 		$(CHATEAU_DEBUG_PACKAGES)
 endef
 TARGET_DEVICES += mikrotik_chateau-5g-r17-ax

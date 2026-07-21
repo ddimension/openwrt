@@ -10,7 +10,7 @@
 #include <dt-bindings/leds/common.h>
 
 / {
-	model = "MikroTik Chateau 5G R17 ax";
+	model = "MikroTik S53UG+5HaxD2HaxD&RG650E-EU (Chateau 5G R17 ax)";
 	compatible = "mikrotik,chateau-5g-r17-ax", "qcom,ipq6018";
 
 	/*
@@ -508,7 +508,7 @@
 
 &wifi {
 	status = "okay";
-	qcom,ath11k-calibration-variant = "MikroTik-Chateau-5G-R17-5g";
+	qcom,ath11k-calibration-variant = "MikroTik-Chateau-5G-R17";
 
 	/*
 	 * Without this the driver advertises a 6 GHz band the IPQ6018 does not
