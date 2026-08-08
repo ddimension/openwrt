@@ -1,0 +1,89 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Valentin?= <avalentin@marcant.net>
+Date: Sat, 8 Aug 2026 08:05:00 +0200
+Subject: [PATCH] wifi: ath11k: run ahb shutdown() teardown only on WCN6750
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The AHB shutdown() callback was added solely for WCN6750, which must stop
+DMA before the SMMU is torn down at system reboot/shutdown. It was
+registered unconditionally in the shared
+ath11k_ahb_driver, so it also runs on the IPQ AHB targets (IPQ8074/
+IPQ6018/IPQ5018), which never had a shutdown() handler before and have no
+such SMMU requirement.
+
+The commit message claimed the change "will not impact other AHB ath11k
+devices", but it does: on IPQ6018 the teardown stops the WCSS Q6 remote
+processor firmware, which leaves shared WCSS state such that the boot ROM
+hangs during DDR training on the following warm reset -- only a cold
+(power-on) reset recovers, so a plain reboot never comes back and needs a
+physical power cycle. This was pinned by bisecting the teardown: skipping
+ath11k_qmi_firmware_stop() (i.e. not stopping the Q6) is what lets the
+warm reset train DDR and boot normally, whereas none of the q6v5 power,
+reset or clock steps reproduce it on their own.
+
+Restrict the shutdown() teardown to WCN6750 via hw_params, restoring the
+pre-regression behaviour for the IPQ AHB targets: they simply have no
+shutdown() teardown again, exactly as they did for years before that
+change, and on reboot/shutdown the SoC reset re-initializes the WCSS from
+scratch. WCN6750 keeps the teardown. Module removal (rmmod / remove()) is
+unchanged for all targets.
+
+Verified on a MikroTik Chateau 5G R17 ax (IPQ6018): before, a plain
+reboot froze in the boot ROM during DDR training; after, it trains DDR
+and boots the kernel across repeated reboots.
+
+Fixes: ac41c2b642b1 ("wifi: ath11k: Register shutdown handler for WCN6750")
+Cc: stable@vger.kernel.org
+Cc: Manikanta Pubbisetty <manikanta.pubbisetty@oss.qualcomm.com>
+Signed-off-by: André Valentin <avalentin@marcant.net>
+---
+ drivers/net/wireless/ath/ath11k/hw.h | 4 ++++
+ drivers/net/wireless/ath/ath11k/core.c | 1 +
+ drivers/net/wireless/ath/ath11k/ahb.c | 11 +++++++++++
+ 3 files changed, 16 insertions(+)
+
+--- a/drivers/net/wireless/ath/ath11k/hw.h
++++ b/drivers/net/wireless/ath/ath11k/hw.h
+@@ -233,6 +233,10 @@
+ 	bool support_fw_mac_sequence;
+ 	bool support_dual_stations;
+ 	bool pdev_suspend;
++	/* run the ahb shutdown() teardown; only WCN6750 needs it, to stop
++	 * DMA before the SMMU is torn down at reboot/shutdown
++	 */
++	bool shutdown_teardown;
+ };
+ 
+ struct ath11k_hw_ops {
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -567,6 +567,7 @@
+ 	{
+ 		.name = "wcn6750 hw1.0",
+ 		.hw_rev = ATH11K_HW_WCN6750_HW10,
++		.shutdown_teardown = true,
+ 		.fw = {
+ 			.dir = "WCN6750/hw1.0",
+ 			.board_size = 256 * 1024,
+--- a/drivers/net/wireless/ath/ath11k/ahb.c
++++ b/drivers/net/wireless/ath/ath11k/ahb.c
+@@ -1358,6 +1358,17 @@
+ 	 * remove() is invoked during rmmod & shutdown() during
+ 	 * system reboot/shutdown.
+ 	 */
++
++	/* The teardown below is only needed on WCN6750 (stop DMA before the
++	 * SMMU is torn down). It was registered for all AHB targets, but on
++	 * the IPQ SoCs it stops the WCSS Q6 firmware and leaves shared state
++	 * that hangs the boot ROM during DDR training on the next warm reset;
++	 * they never had a shutdown() teardown before and the SoC reset
++	 * re-initializes the WCSS from scratch, so skip it there.
++	 */
++	if (!ab->hw_params.shutdown_teardown)
++		return;
++
+ 	ath11k_ahb_remove_prepare(ab);
+ 
+ 	if (!(test_bit(ATH11K_FLAG_REGISTERED, &ab->dev_flags)))
