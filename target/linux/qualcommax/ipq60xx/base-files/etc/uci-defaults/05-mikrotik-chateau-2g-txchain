@@ -1,0 +1,20 @@
+#!/bin/sh
+# MikroTik Chateau 5G R17 ax: with the default 2x2 TX chainmask the 2.4 GHz
+# radio never delivers host-originated unicast frames (auth/assoc/data) to the
+# peer, while FW-generated beacons and RX work. Dual-chain legacy (CDD) TX
+# cancels itself on this board's 2G front end; each chain works on its own.
+# Restrict 2G TX to chain 0 until the dual-chain issue is fully understood.
+. /lib/functions.sh
+
+case "$(board_name)" in
+mikrotik,chateau-5g-r17-ax)
+	[ -f /etc/config/wireless ] || wifi config
+	for radio in $(uci -q show wireless | sed -n "s/^wireless\.\([^.]*\)=wifi-device/\1/p"); do
+		[ "$(uci -q get wireless.$radio.band)" = "2g" ] || continue
+		uci set wireless.$radio.txantenna=1
+		uci set wireless.$radio.rxantenna=3
+	done
+	uci commit wireless
+	;;
+esac
+exit 0
