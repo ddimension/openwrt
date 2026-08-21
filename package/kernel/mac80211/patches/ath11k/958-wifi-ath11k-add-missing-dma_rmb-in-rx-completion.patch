@@ -1,0 +1,37 @@
+From: =?UTF-8?q?Andr=C3=A9=20Valentin?= <avalentin@marcant.net>
+Date: Sun, 17 Aug 2026 06:50:00 +0200
+Subject: [PATCH] wifi: ath11k: add missing dma_rmb() in RX completion
+
+The mac80211 backport of upstream commit ab52e3e44fe9 ("wifi: ath11k: fix
+rx completion meta data corruption") applied the READ_ONCE() accessors but
+dropped the dma_rmb() barrier after ath11k_hal_srng_access_begin() in
+ath11k_dp_process_rx(). On weakly ordered aarch64 targets (IPQ807x/IPQ60xx)
+the REO destination ring descriptor is then read before the head pointer is
+observed, using stale data.
+
+On IPQ6018 this kills RX entirely: the firmware receives frames but never
+delivers them to the host (pdev_stats "MPDUs delivered to HTT: 0", vdev
+rx_packets stays 0, "msdu_done bit in attention is not set"), while TX,
+beacons and the monitor/ppdu path keep working.
+
+Same defect as the 6.12 backport (OpenWrt #24416 / #24417); restore the
+barrier for the 6.18 backport too. The READ_ONCE() hunks are already
+present, so only the barrier is added here.
+
+Signed-off-by: André Valentin <avalentin@marcant.net>
+---
+ drivers/net/wireless/ath/ath11k/dp_rx.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/net/wireless/ath/ath11k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+@@ -2648,6 +2648,9 @@ int ath11k_dp_process_rx(struct ath11k_b
+ try_again:
+ 	ath11k_hal_srng_access_begin(ab, srng);
+ 
++	/* Make sure descriptor is read after the head pointer. */
++	dma_rmb();
++
+ 	while (likely(desc =
+ 	      (struct hal_reo_dest_ring *)ath11k_hal_srng_dst_get_next_entry(ab,
+ 									     srng))) {
