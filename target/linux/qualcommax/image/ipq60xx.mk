@@ -72,11 +72,11 @@ define Device/mikrotik_chateau-5g-r17-ax
 	#   libqmi reaches all of them, so a libqmi based connection manager is
 	#   needed for an actual data session.
 	# kmod-usb-serial-option: AT ports of the modem.
-	# No ipq-wifi package: this unit's own board data comes out of
-	#   RouterBOOT hard_config at runtime, see
-	#   ipq60xx/base-files/lib/preinit/81_mikrotik_board_data. The
-	#   board-2.bin from ath11k-firmware-ipq6018 has no entry this
-	#   device matches.
+	# No ipq-wifi package: this unit's own board data and cal data come out
+	#   of RouterBOOT hard_config at runtime, served to ath11k from the
+	#   firmware hotplug script ipq60xx/base-files/etc/hotplug.d/firmware/
+	#   11-ath11k-caldata. The board-2.bin from ath11k-firmware-ipq6018 has
+	#   no entry this device matches.
 	# The USB basics (kmod-usb3, kmod-usb-dwc3, kmod-usb-dwc3-qcom) are
 	# already DEFAULT_PACKAGES of the target and are not repeated here.
 	DEVICE_PACKAGES := kmod-usb-net-qmi-wwan kmod-usb-serial-option uqmi \
