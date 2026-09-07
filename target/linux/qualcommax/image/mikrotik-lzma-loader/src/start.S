@@ -1,5 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 /*
+ * Copyright (C) 2026 André Valentin <avalentin@marcant.net>
+ *
  * arm64 entry point of the LZMA loader, modelled on MikroTik's own loader as
  * found in the flash dump.
  *

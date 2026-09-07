@@ -1,5 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 /*
+ * Copyright (C) 2026 André Valentin <avalentin@marcant.net>
+ *
  * A single PT_LOAD segment holding code, compressed kernel and DTB.
  *
  * Accesses to a separately loaded payload segment fail regardless of address

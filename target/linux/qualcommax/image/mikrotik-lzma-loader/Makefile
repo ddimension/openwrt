@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Copyright (C) 2026 André Valentin <avalentin@marcant.net>
 #
 # LZMA loader for RouterBOOT based MikroTik devices on qualcommax.
 #
@@ -7,6 +10,10 @@
 # a single PT_LOAD segment, decompresses them at runtime and jumps to the
 # kernel. Called from the image recipe as:
 #   $(MAKE) -C .../mikrotik-lzma-loader KERNEL_IMAGE=... DTB=... OUTPUT=...
+#
+# src/LzmaDecode.[ch] are the decoder of the LZMA SDK 4.21 by Igor Pavlov,
+# unmodified and under their own license; everything else is written for
+# this loader.
 #
 PKG_MAINTAINER:=André Valentin <avalentin@marcant.net>
 PKG_LICENSE:=GPL-2.0-or-later LGPL-2.1-or-later

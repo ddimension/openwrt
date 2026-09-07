@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 /*
+ * Copyright (C) 2026 André Valentin <avalentin@marcant.net>
+ *
  * LZMA loader for RouterBOOT based MikroTik devices.
  *
  * Memory map, see loader.lds:
