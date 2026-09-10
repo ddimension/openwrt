@@ -508,14 +508,6 @@
 	status = "disabled";
 };
 
-/*
- * The watchdog is armed but never fed during boot, which resets the board
- * after roughly 30 seconds.
- */
-&{/soc@0/watchdog@b017000} {
-	status = "disabled";
-};
-
 &wifi {
 	status = "okay";
 	qcom,ath11k-calibration-variant = "MikroTik-Chateau-5G-R17";

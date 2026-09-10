@@ -9,4 +9,4 @@
 	.incbin "kernel.img.lzma"
 
 	.section .payload.dtb, "a"
-	.incbin "chateau.dtb"
+	.incbin "payload.dtb"

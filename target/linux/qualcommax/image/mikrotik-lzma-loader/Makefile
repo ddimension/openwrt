@@ -38,10 +38,10 @@ $(BUILD)/kernel.img.lzma: $(KERNEL_IMAGE) | $(BUILD)
 	rm -f $@
 	$(STAGING_DIR_HOST)/bin/lzma e $< $@
 
-$(BUILD)/chateau.dtb: $(DTB) | $(BUILD)
+$(BUILD)/payload.dtb: $(DTB) | $(BUILD)
 	cp $< $@
 
-$(BUILD)/%.o: $(LOADER_DIR)/%.S $(BUILD)/kernel.img.lzma $(BUILD)/chateau.dtb | $(BUILD)
+$(BUILD)/%.o: $(LOADER_DIR)/%.S $(BUILD)/kernel.img.lzma $(BUILD)/payload.dtb | $(BUILD)
 	$(TARGET_CC) $(CFLAGS) -I$(BUILD) -c -o $@ $<
 
 $(BUILD)/%.o: $(LOADER_DIR)/%.c | $(BUILD)
