@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# board_name/sysinfo are not reliably available this early in the boot
+# (first boot, before the overlay), so match on the DT model instead.
+
+do_lte3301_prepare() {
+	if [ "$(cat /sys/firmware/devicetree/base/model)" != "ZyXEL LTE3301-M209" ] && \
+		[ "$(cat /sys/firmware/devicetree/base/model)" != "ZyXEL LTE3301-Q222" ]; then
+		return 0
+	fi
+	# The gpio-export node in the DTS already owns the usbpower GPIO and
+	# drives it high at probe time; just make sure it stays on. (A manual
+	# export attempt used to fail with "Permission denied".)
+	echo 1 > /sys/class/gpio/usbpower/value 2>/dev/null
+}
+
+boot_hook_add preinit_main do_lte3301_prepare
