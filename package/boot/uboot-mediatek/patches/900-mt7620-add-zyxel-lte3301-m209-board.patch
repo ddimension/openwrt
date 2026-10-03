@@ -1,0 +1,948 @@
+--- a/configs/mt7620_lte3301_m209_defconfig
++++ b/configs/mt7620_lte3301_m209_defconfig
+@@ -0,0 +1,74 @@
++CONFIG_MIPS=y
++CONFIG_SKIP_LOWLEVEL_INIT=y
++CONFIG_SYS_MALLOC_LEN=0x100000
++CONFIG_SPL_LIBCOMMON_SUPPORT=y
++CONFIG_SPL_LIBGENERIC_SUPPORT=y
++CONFIG_NR_DRAM_BANKS=1
++CONFIG_ENV_SIZE=0x1000
++CONFIG_ENV_OFFSET=0x30000
++CONFIG_ENV_SECT_SIZE=0x10000
++CONFIG_DEFAULT_DEVICE_TREE="mediatek,mt7620-lte3301-m209"
++CONFIG_SPL_SYS_MALLOC_F_LEN=0x40000
++CONFIG_SPL_SERIAL=y
++CONFIG_SPL_BSS_START_ADDR=0x80010000
++CONFIG_SPL_BSS_MAX_SIZE=0x10000
++CONFIG_SYS_BOOTM_LEN=0x1000000
++CONFIG_SYS_LOAD_ADDR=0x80010000
++CONFIG_SPL=y
++CONFIG_DEBUG_UART_BASE=0xb0000c00
++CONFIG_DEBUG_UART_CLOCK=40000000
++CONFIG_ARCH_MTMIPS=y
++CONFIG_SYS_MIPS_TIMER_FREQ=290000000
++CONFIG_MIPS_CACHE_SETUP=y
++CONFIG_MIPS_CACHE_DISABLE=y
++CONFIG_RESTORE_EXCEPTION_VECTOR_BASE=y
++CONFIG_MIPS_BOOT_FDT=y
++CONFIG_DEBUG_UART=y
++CONFIG_FIT=y
++# CONFIG_ARCH_FIXUP_FDT_MEMORY is not set
++CONFIG_SYS_MALLOC_BOOTPARAMS=y
++CONFIG_SPL_MAX_SIZE=0x10000
++CONFIG_SPL_SYS_MALLOC_SIMPLE=y
++CONFIG_SPL_NOR_SUPPORT=y
++# CONFIG_CMD_ELF is not set
++# CONFIG_CMD_XIMG is not set
++# CONFIG_CMD_CRC32 is not set
++# CONFIG_CMD_DM is not set
++CONFIG_HUSH_PARSER=y
++# CONFIG_CMD_LOADS is not set
++CONFIG_CMD_SPI=y
++CONFIG_CMD_DHCP=y
++# CONFIG_CMD_MDIO is not set
++# CONFIG_SPL_DOS_PARTITION is not set
++# CONFIG_ISO_PARTITION is not set
++CONFIG_OF_SPL_REMOVE_PROPS="pinctrl-0 pinctrl-names clocks clock-names interrupt-parent interrupts resets reset-names"
++CONFIG_ENV_IS_IN_SPI_FLASH=y
++CONFIG_ENV_RELOC_GD_ENV_ADDR=y
++CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_SPL_DM=y
++# CONFIG_SIMPLE_BUS is not set
++# CONFIG_SPL_SIMPLE_BUS is not set
++CONFIG_GPIO_HOG=y
++# CONFIG_INPUT is not set
++CONFIG_SPI_FLASH_SFDP_SUPPORT=y
++CONFIG_SPI_FLASH_GIGADEVICE=y
++CONFIG_SPI_FLASH_WINBOND=y
++CONFIG_MT7620_ETH=y
++CONFIG_PHY=y
++CONFIG_SPECIFY_CONSOLE_INDEX=y
++CONFIG_DEBUG_UART_SHIFT=2
++CONFIG_SPI=y
++CONFIG_MT7620_SPI=y
++CONFIG_LZMA=y
++CONFIG_SPL_LZMA=y
++CONFIG_BAUDRATE=115200
++CONFIG_BOOTDELAY=3
++CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
++CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209.env"
++CONFIG_LED=y
++CONFIG_LED_BOOT=y
++CONFIG_BOARD_LATE_INIT=y
++CONFIG_SYS_BOARD="mt7620-lte3301-m209"
++CONFIG_SYS_VENDOR="mediatek"
++CONFIG_LED_GPIO=y
++CONFIG_CMD_LED=y
+
+--- a/configs/mt7620_lte3301_m209_autoinstall_defconfig
++++ b/configs/mt7620_lte3301_m209_autoinstall_defconfig
+@@ -0,0 +1,76 @@
++CONFIG_MIPS=y
++CONFIG_SKIP_LOWLEVEL_INIT=y
++CONFIG_SYS_MALLOC_LEN=0x100000
++CONFIG_SPL_LIBCOMMON_SUPPORT=y
++CONFIG_SPL_LIBGENERIC_SUPPORT=y
++CONFIG_NR_DRAM_BANKS=1
++CONFIG_ENV_SIZE=0x1000
++CONFIG_ENV_OFFSET=0x30000
++CONFIG_ENV_SECT_SIZE=0x10000
++CONFIG_DEFAULT_DEVICE_TREE="mediatek,mt7620-lte3301-m209"
++CONFIG_SPL_SYS_MALLOC_F_LEN=0x40000
++CONFIG_SPL_SERIAL=y
++CONFIG_SPL_BSS_START_ADDR=0x80010000
++CONFIG_SPL_BSS_MAX_SIZE=0x10000
++CONFIG_SYS_BOOTM_LEN=0x1000000
++CONFIG_SYS_LOAD_ADDR=0x80010000
++CONFIG_SPL=y
++CONFIG_DEBUG_UART_BASE=0xb0000c00
++CONFIG_DEBUG_UART_CLOCK=40000000
++CONFIG_ARCH_MTMIPS=y
++CONFIG_SYS_MIPS_TIMER_FREQ=290000000
++CONFIG_MIPS_CACHE_SETUP=y
++CONFIG_MIPS_CACHE_DISABLE=y
++CONFIG_RESTORE_EXCEPTION_VECTOR_BASE=y
++CONFIG_MIPS_BOOT_FDT=y
++CONFIG_DEBUG_UART=y
++CONFIG_FIT=y
++# CONFIG_ARCH_FIXUP_FDT_MEMORY is not set
++CONFIG_SYS_MALLOC_BOOTPARAMS=y
++CONFIG_SPL_MAX_SIZE=0x10000
++CONFIG_SPL_SYS_MALLOC_SIMPLE=y
++CONFIG_SPL_NOR_SUPPORT=y
++# CONFIG_CMD_ELF is not set
++# CONFIG_CMD_XIMG is not set
++# CONFIG_CMD_CRC32 is not set
++# CONFIG_CMD_DM is not set
++CONFIG_HUSH_PARSER=y
++# CONFIG_CMD_LOADS is not set
++CONFIG_CMD_SPI=y
++CONFIG_CMD_DHCP=y
++# CONFIG_CMD_MDIO is not set
++# CONFIG_SPL_DOS_PARTITION is not set
++# CONFIG_ISO_PARTITION is not set
++CONFIG_OF_SPL_REMOVE_PROPS="pinctrl-0 pinctrl-names clocks clock-names interrupt-parent interrupts resets reset-names"
++CONFIG_ENV_IS_NOWHERE=y
++CONFIG_ENV_RELOC_GD_ENV_ADDR=y
++CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_SPL_DM=y
++# CONFIG_SIMPLE_BUS is not set
++# CONFIG_SPL_SIMPLE_BUS is not set
++CONFIG_GPIO_HOG=y
++# CONFIG_INPUT is not set
++CONFIG_SPI_FLASH_SFDP_SUPPORT=y
++CONFIG_SPI_FLASH_GIGADEVICE=y
++CONFIG_SPI_FLASH_WINBOND=y
++CONFIG_MT7620_ETH=y
++CONFIG_PHY=y
++CONFIG_SPECIFY_CONSOLE_INDEX=y
++CONFIG_DEBUG_UART_SHIFT=2
++CONFIG_SPI=y
++CONFIG_MT7620_SPI=y
++CONFIG_LZMA=y
++CONFIG_SPL_LZMA=y
++CONFIG_BAUDRATE=115200
++CONFIG_BOOTDELAY=3
++CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
++CONFIG_TEXT_BASE=0x80000000
++CONFIG_MTMIPS_RAM_EXEC=y
++CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209-autoinstall.env"
++CONFIG_LED=y
++CONFIG_LED_BOOT=y
++CONFIG_BOARD_LATE_INIT=y
++CONFIG_SYS_BOARD="mt7620-lte3301-m209"
++CONFIG_SYS_VENDOR="mediatek"
++CONFIG_LED_GPIO=y
++CONFIG_CMD_LED=y
+
+
+--- a/board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209-autoinstall.env
++++ b/board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209-autoinstall.env
+@@ -0,0 +1,30 @@
++bootdelay=3
++baudrate=115200
++bootcmd=run autoinstall
++bootargs=console=ttyS0,115200 rootfstype=squashfs
++
++loadaddr=0x80010000
++netloadaddr=0x81000000
++
++# Sanity magics checked before any flash erase/write (see chk_* below):
++#   spl_magic = first word of the bootloader (SPL entry, offset 0)
++#   fit_magic = FDT/FIT magic d00dfeed, little-endian in memory
++# A download is only written if it is the right kind of image; tftpboot
++# already guarantees the transfer was complete (it fails otherwise).
++spl_magic=1000013f
++fit_magic=edfe0dd0
++chk_factory=test "$filesize" = "ff0000" && setexpr v *$netloadaddr + 0 && test "$v" = "$spl_magic" && setexpr a $netloadaddr + 0x40000 && setexpr v *$a + 0 && test "$v" = "$fit_magic"
++
++# Fixed recovery LAN, fully static - no DHCP/BOOTP anywhere.
++ipaddr=192.168.123.254
++serverip=192.168.123.123
++
++# One-shot full-image install: fetch factory.bin over TFTP, write the
++# complete flash image (U-Boot + env + firmware; the config partition
++# at 0xFF0000 is not part of it) and reset. There is no read-back
++# verify: the 16 MiB image leaves no free RAM window for a second
++# copy (the relocation area is reserved); the sf update skip-identical
++# logic plus the FIT hash checks on the next boot guard against torn
++# writes. Runs from RAM, so jboot stays intact until the write reaches
++# the bootloader sectors.
++autoinstall=tftpboot $netloadaddr factory.bin && run chk_factory && sf probe && sf update $netloadaddr 0x0 $filesize && reset || echo "autoinstall: image incomplete or not a bootloader - flash skipped"
+--- a/board/mediatek/mt7620-lte3301-m209/Makefile
++++ b/board/mediatek/mt7620-lte3301-m209/Makefile
+@@ -0,0 +1,1 @@
++obj-y += board.o
+--- a/board/mediatek/mt7620-lte3301-m209/board.c
++++ b/board/mediatek/mt7620-lte3301-m209/board.c
+@@ -0,0 +1,397 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ZyXEL LTE3301-M209/Q222 — board init
++ *
++ * The device MAC lives in the vendor config partition (0xFF0000) at
++ * different offsets per hardware variant:
++ *   M209: 0xe2a8 (Q222 stores the serial number there instead)
++ *   Q222: 0xe07c
++ * Read both candidates and set ethaddr from the first plausible one
++ * (unicast, not all-zero/all-ff). If neither is valid, the network
++ * stack falls back to a random MAC as before. The environment is only
++ * set in RAM — the env partition stays untouched.
++ *
++ * Additionally the STAG/CSXF record chain in the config partition is
++ * parsed (importer ported from the jboot_config_read userspace tool)
++ * and handed to the kernel as environment variables:
++ *   jboot_model  (record 0x20, "LTE3301")
++ *   jboot_serial (record 0x12, "S..."; falls back to 0x10 "ZXL...")
++ *   jboot_serial_zxl (record 0x10)
++ *   jboot_build  (record 0x18, production date)
++ *   jboot_subtype ("m209"/"q222", detected via the known MAC offsets)
++ * These are persisted (env_save) only when they changed.
++ */
++
++#include <env.h>
++#include <spi_flash.h>
++#include <dm/uclass.h>
++#include <asm/global_data.h>
++#include <asm/io.h>
++
++DECLARE_GLOBAL_DATA_PTR;
++
++#define JBOOT_CFG_OFFSET	0xff0000
++#define MAC_OFFSET_M209		0xe2a8
++#define MAC_OFFSET_Q222		0xe07c
++
++static bool is_valid_mac(const u8 *mac)
++{
++	int i;
++
++	if (mac[0] & 1)		/* multicast/broadcast bit */
++		return false;
++
++	for (i = 0; i < 6; i++) {
++		if (mac[i])
++			break;
++	}
++	if (i == 6)		/* all zero */
++		return false;
++
++	for (i = 0; i < 6; i++) {
++		if (mac[i] != 0xff)
++			break;
++	}
++	if (i == 6)		/* all 0xff */
++		return false;
++
++	return true;
++}
++
++static int read_config_mac(u8 *mac)
++{
++	struct udevice *dev;
++	struct spi_flash *flash;
++	int ret;
++
++	ret = uclass_get_device(UCLASS_SPI_FLASH, 0, &dev);
++	if (ret)
++		return ret;
++	flash = dev_get_uclass_priv(dev);
++
++	ret = spi_flash_read(flash, JBOOT_CFG_OFFSET + MAC_OFFSET_M209, 6, mac);
++	if (!ret && is_valid_mac(mac))
++		return 0;
++
++	ret = spi_flash_read(flash, JBOOT_CFG_OFFSET + MAC_OFFSET_Q222, 6, mac);
++	if (!ret && is_valid_mac(mac))
++		return 0;
++
++	return -1;
++}
++
++/* --- jboot config record chain importer -------------------------------- */
++#define JBOOT_CFG_SIZE	0x10000
++#define STAG_SIZE		16
++#define STAG_MAGIC		0x2b24
++#define STAG_ID			0x02
++#define CSXF_SIZE		16
++#define CSXF_MAGIC		0x5343
++#define DHDR_SIZE		6
++#define DHDR_UNKNOWN		0x8000
++#define DHDR_EEPROM		0xf5
++#define DHDR_CONFIG		0x42
++#define REC_ID_MAC		0x30
++#define REC_ID_MODEL		0x20
++#define REC_ID_SERIAL		0x10
++#define REC_ID_SN		0x12
++#define REC_ID_DATE		0x18
++
++struct jboot_stag_header {
++	u8 cmark;
++	u8 id;
++	u16 magic;
++	u32 time_stamp;
++	u32 image_length;
++	u16 image_checksum;
++	u16 tag_checksum;
++};
++
++struct jboot_csxf_header {
++	u16 magic;
++	u16 checksum;
++	u32 body_length;
++	u8 body_encoding;
++	u8 reserved[3];
++	u32 raw_length;
++};
++
++struct jboot_data_header {
++	u8 id;
++	u8 type;
++	u16 unknown;
++	u16 length;
++	u8 data[];
++};
++
++/*
++ * Byte-wise jboot checksum: the record chain contains odd-length
++ * records, so every field read must be alignment-safe (MIPS faults on
++ * unaligned u16/u32 loads - the x86-only userspace tool never noticed).
++ */
++static u16 get_le16(const u8 *p)
++{
++	return p[0] | (p[1] << 8);
++}
++
++static u32 get_le32(const u8 *p)
++{
++	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
++}
++
++static u16 jboot_checksum(u16 start_val, const u8 *data, int size)
++{
++	u32 counter = start_val;
++	const u8 *ptr = data;
++
++	while (size > 1) {
++		counter += get_le16(ptr);
++		ptr += 2;
++		while (counter >> 16)
++			counter = (u16)counter + (counter >> 16);
++		size -= 2;
++	}
++	if (size > 0) {
++		counter += *ptr;
++		counter -= 0xff;
++	}
++	while (counter >> 16)
++		counter = (u16)counter + (counter >> 16);
++	return counter;
++}
++
++static void copy_rec_string(const u8 *data, int len, char *out, int out_size)
++{
++	int n = len < out_size - 1 ? len : out_size - 1;
++
++	memcpy(out, data, n);
++	out[n] = 0;
++}
++
++static int import_jboot_config(u8 *mac, char *subtype, int subtype_size,
++			       char *model, int model_size,
++			       char *serial_zxl, int zxl_size,
++			       char *serial_sn, int sn_size,
++			       char *build_date, int date_size)
++{
++	struct udevice *dev;
++	struct spi_flash *flash;
++	struct jboot_csxf_header *csxf;
++	struct jboot_data_header *rec;
++	u8 stag_pat[4] = { STAG_ID, STAG_ID, STAG_MAGIC & 0xff,
++			   STAG_MAGIC >> 8 };
++	u8 *buf, *p, *end;
++	u8 probe[6];
++	u32 body_len;
++	u16 stored_cs;
++	int ret;
++
++	ret = uclass_get_device(UCLASS_SPI_FLASH, 0, &dev);
++	if (ret)
++		return ret;
++	flash = dev_get_uclass_priv(dev);
++
++	buf = malloc(JBOOT_CFG_SIZE);
++	if (!buf)
++		return -1;
++
++	if (spi_flash_read(flash, JBOOT_CFG_OFFSET, JBOOT_CFG_SIZE, buf)) {
++		free(buf);
++		return -1;
++	}
++
++	/*
++	 * Locate the checksum-verified STAG header. Stop early enough that
++	 * the CSXF header behind it is still inside the buffer.
++	 */
++	for (p = buf; p + STAG_SIZE + CSXF_SIZE <= buf + JBOOT_CFG_SIZE; p++) {
++		if (memcmp(p, stag_pat, 4))
++			continue;
++		if (get_le16(p + 14) ==
++		    (u16)~jboot_checksum(0, p, STAG_SIZE - 2))
++			break;
++	}
++	if (p + STAG_SIZE + CSXF_SIZE > buf + JBOOT_CFG_SIZE) {
++		free(buf);
++		return -1;
++	}
++
++	/* verify the CSXF header right behind the STAG */
++	csxf = (struct jboot_csxf_header *)(p + STAG_SIZE);
++	if (get_le16((u8 *)csxf) != CSXF_MAGIC) {
++		free(buf);
++		return -1;
++	}
++	body_len = get_le32((u8 *)csxf + 12);
++	if (body_len > JBOOT_CFG_SIZE - (u32)((u8 *)csxf - buf) - CSXF_SIZE) {
++		free(buf);
++		return -1;
++	}
++	stored_cs = get_le16((u8 *)csxf + 2);
++	*((u8 *)csxf + 2) = 0;
++	*((u8 *)csxf + 3) = 0;
++	if (stored_cs !=
++	    (u16)~jboot_checksum(0, (u8 *)csxf, body_len + CSXF_SIZE)) {
++		free(buf);
++		return -1;
++	}
++
++	/* walk the record chain */
++	end = buf + JBOOT_CFG_SIZE;
++	p += STAG_SIZE + CSXF_SIZE;
++	while (p + DHDR_SIZE <= end) {
++		rec = (struct jboot_data_header *)p;
++		if (get_le16(p + 2) != DHDR_UNKNOWN ||
++		    (p[1] != DHDR_EEPROM && p[1] != DHDR_CONFIG)) {
++			p++;
++			continue;
++		}
++		if (p + DHDR_SIZE + get_le16(p + 4) > end)
++			break;
++		switch (p[0]) {
++		case REC_ID_MAC:
++			if (get_le16(p + 4) >= 6)
++				memcpy(mac, p + DHDR_SIZE, 6);
++			break;
++		case REC_ID_MODEL:
++			copy_rec_string(p + DHDR_SIZE, get_le16(p + 4), model,
++					model_size);
++			break;
++		case REC_ID_SERIAL:
++			copy_rec_string(p + DHDR_SIZE, get_le16(p + 4),
++					serial_zxl, zxl_size);
++			break;
++		case REC_ID_SN:
++			copy_rec_string(p + DHDR_SIZE, get_le16(p + 4), serial_sn,
++					sn_size);
++			break;
++		case REC_ID_DATE:
++			copy_rec_string(p + DHDR_SIZE, get_le16(p + 4),
++					build_date, date_size);
++			break;
++		}
++		p += DHDR_SIZE + get_le16(p + 4);
++	}
++
++	/*
++	 * Variant detection: the record MAC must match the data at one of
++	 * the known fixed offsets (M209 0xe2a8, Q222 0xe07c).
++	 */
++	if (is_valid_mac(mac)) {
++		if (!spi_flash_read(flash, JBOOT_CFG_OFFSET + MAC_OFFSET_M209,
++				    6, probe) && !memcmp(probe, mac, 6))
++			copy_rec_string((const u8 *)"m209", 4, subtype,
++					subtype_size);
++		else if (!spi_flash_read(flash,
++					 JBOOT_CFG_OFFSET + MAC_OFFSET_Q222,
++					 6, probe) && !memcmp(probe, mac, 6))
++			copy_rec_string((const u8 *)"q222", 4, subtype,
++					subtype_size);
++	}
++
++	free(buf);
++	return 0;
++}
++
++static void env_set_if_changed(const char *name, const char *val, bool *dirty)
++{
++	const char *cur = env_get(name);
++
++	if (!cur || strcmp(cur, val)) {
++		env_set(name, val);
++		*dirty = true;
++	}
++}
++
++/*
++ * The reset button is GPIO 1 and WPS is GPIO 2 (bank 0 data at 0xb0000620,
++ * both active low); the "i2c" pin group already puts them in GPIO mode.
++ * Holding either one at boot requests a full network reinstall, the same
++ * thing the RAM autoinstall image does unconditionally.
++ */
++#define LTE3301_GPIO0_DATA	0xb0000620
++#define LTE3301_GPIO0_DIR	0xb0000624
++#define LTE3301_BTN_MASK	((1u << 1) | (1u << 2))	/* reset | WPS */
++
++static bool install_button_held(void)
++{
++	void __iomem *dir = (void __iomem *)LTE3301_GPIO0_DIR;
++	void __iomem *data = (void __iomem *)LTE3301_GPIO0_DATA;
++
++	writel(readl(dir) & ~LTE3301_BTN_MASK, dir);	/* reset+WPS = inputs */
++	/* active low: pressed when either bit reads 0 */
++	return (readl(data) & LTE3301_BTN_MASK) != LTE3301_BTN_MASK;
++}
++
++int board_late_init(void)
++{
++	u8 mac[6], walker_mac[6] = { 0 };
++	char subtype[8] = { 0 }, model[32] = { 0 };
++	char serial_zxl[32] = { 0 }, serial_sn[32] = { 0 };
++	char build_date[32] = { 0 };
++	bool dirty = false;
++
++	if (!eth_env_get_enetaddr("ethaddr", mac)) {
++		if (!read_config_mac(mac))
++			eth_env_set_enetaddr("ethaddr", mac);
++	}
++
++	/*
++	 * Import the vendor config records and pass them to the kernel via
++	 * the environment (readable with fw_printenv). Persisted only when
++	 * something changed, to avoid unnecessary flash writes.
++	 */
++	if (!import_jboot_config(walker_mac, subtype, sizeof(subtype),
++				 model, sizeof(model),
++				 serial_zxl, sizeof(serial_zxl),
++				 serial_sn, sizeof(serial_sn),
++				 build_date, sizeof(build_date))) {
++		if (is_valid_mac(walker_mac) &&
++		    (!eth_env_get_enetaddr("ethaddr", mac) ||
++		     memcmp(mac, walker_mac, 6)))
++			eth_env_set_enetaddr("ethaddr", walker_mac);
++		if (subtype[0])
++			env_set_if_changed("jboot_subtype", subtype, &dirty);
++		if (model[0])
++			env_set_if_changed("jboot_model", model, &dirty);
++		if (serial_sn[0])
++			env_set_if_changed("jboot_serial", serial_sn, &dirty);
++		else if (serial_zxl[0])
++			env_set_if_changed("jboot_serial", serial_zxl, &dirty);
++		if (serial_zxl[0])
++			env_set_if_changed("jboot_serial_zxl", serial_zxl,
++					   &dirty);
++		if (build_date[0])
++			env_set_if_changed("jboot_build", build_date, &dirty);
++	}
++
++#ifndef CONFIG_SPL_BUILD
++	/*
++	 * Persist the environment when the jboot values changed, or when
++	 * the default environment is in use (the flash env was unreadable):
++	 * then bootcmd and friends are written so that the next boot
++	 * imports a valid env instead of showing a bad-CRC warning.
++	 * Note: env_init() marks the fallback default env as ENV_VALID,
++	 * so GD_FLG_ENV_DEFAULT is the only reliable indicator.
++	 *
++	 * Skipped for the RAM-executed install variant (ENV_IS_NOWHERE):
++	 * that one runs while the old vendor layout is still in flash and
++	 * must not write anything before the install itself does.
++	 */
++	if (!IS_ENABLED(CONFIG_ENV_IS_NOWHERE) &&
++	    (dirty || (gd->flags & GD_FLG_ENV_DEFAULT)))
++		env_save();
++#endif
++
++	/*
++	 * Done last and only in RAM (after any env_save above), so a held
++	 * button changes just this boot and is never persisted: run the
++	 * network autoinstall instead of the normal boot.
++	 */
++	if (install_button_held()) {
++		printf("reset/WPS button held - starting network autoinstall\n");
++		env_set("bootcmd", "run autoinstall");
++	}
++
++	return 0;
++}
+--- a/arch/mips/cpu/start.S
++++ b/arch/mips/cpu/start.S
+@@ -69,6 +69,28 @@
+ #endif
+ 	.endm
+ 
++/*
++ * MARKER: raw UART-Lite output (base 0xb0000c00, KSEG1) for debugging a
++ * RAM-executed image. The UART is already set up by the loader that
++ * jumped here; this needs no stack and no function calls. Prints the
++ * character in \ch. Only active with CONFIG_MTMIPS_RAM_EXEC - in a
++ * flash-booted SPL the UART is dead at the entry point (endless loop!).
++ */
++#ifdef CONFIG_MTMIPS_RAM_EXEC
++	.macro MARKER, ch
++	li	t0, 0xb0000c00
++901:	lw	t1, 0x1c(t0)		# LSR
++	andi	t1, t1, 0x20		# THRE
++	beqz	t1, 901b
++	 nop
++	li	t1, \ch
++	sw	t1, 0x04(t0)		# THR
++	.endm
++#else
++	.macro MARKER, ch
++	.endm
++#endif
++
+ ENTRY(_start)
+ 	/*
+ 	 * U-Boot entry point.
+@@ -124,6 +146,28 @@
+ #endif
+ 
+ reset:
++	MARKER	'0'
++#ifdef CONFIG_MTMIPS_RAM_EXEC
++	/*
++	 * RAM execution: jboot decompresses the image to 0x80000000 and
++	 * may write it through the D-cache (only the first 8K get written
++	 * back by jboot). Before anything invalidates the D-cache, save
++	 * all dirty lines to RAM: Index_Writeback_Inv_D over 32K
++	 * (24KEc D-cache 32K, 32B/line).
++	 *
++	 * Must stay disabled for a flash-booted SPL: there the cache is
++	 * still uninitialised and DRAM is not up yet, so writing back
++	 * random dirty lines would be fatal.
++	 */
++	li	t0, 0x80000000
++	li	t1, 0x80008000
++1:	cache	0x01, 0(t0)
++	addiu	t0, t0, 32
++	bne	t0, t1, 1b
++	 nop
++	sync
++#endif
++	MARKER	'6'
+ 	mtc0	zero, CP0_COUNT	# clear cp0 count for most accurate boot timing
+ #if __mips_isa_rev >= 6
+ 	mfc0	t0, CP0_CONFIG, 5
+@@ -155,6 +193,7 @@
+ 	and	t0, ST0_IMPL
+ 	or	t0, ST0_BEV | ST0_ERL | STATUS_SET
+ 	mtc0	t0, CP0_STATUS
++	MARKER	'1'
+ 
+ 	/*
+ 	 * Check whether CP0 Config1 is implemented. If not continue
+@@ -199,9 +238,11 @@
+ 
+ #ifdef CONFIG_MIPS_CACHE_DISABLE
+ 	/* Disable caches */
++	MARKER	'2'
+ 	PTR_LA	t9, mips_cache_disable
+ 	jalr	t9
+ 	 nop
++	MARKER	'3'
+ #endif
+ 
+ #ifdef CONFIG_MIPS_CM
+@@ -220,12 +261,14 @@
+ 
+ 	/* Set up initial stack and global data */
+ 	setup_stack_gd
++	MARKER	'4'
+ 
+ # ifdef CONFIG_DEBUG_UART
+ 	/* Earliest point to set up debug uart */
+ 	PTR_LA	t9, debug_uart_init
+ 	jalr	t9
+ 	 nop
++	MARKER	'5'
+ # endif
+ #endif
+ 
+@@ -248,6 +291,7 @@
+ 	PTR_LA	t9, mips_cache_reset
+ 	jalr	t9
+ 	 nop
++	MARKER	'B'
+ #endif
+ 
+ #if !CONFIG_IS_ENABLED(SKIP_LOWLEVEL_INIT)
+@@ -271,6 +315,7 @@
+ # endif
+ #endif
+ 
++	MARKER	'C'
+ 	move	a0, zero		# a0 <-- boot_flags = 0
+ 	PTR_LA	t9, board_init_f
+ 
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -88,6 +88,22 @@
+ 	select SUPPORT_LITTLE_ENDIAN
+ 	select SUPPORT_SPL
+ 
++config MTMIPS_RAM_EXEC
++	bool "Support being RAM-executed by a previous loader"
++	depends on ARCH_MTMIPS
++	help
++	  Build an image that is started from RAM by another bootloader
++	  (e.g. the vendor loader jboot, which jumps to a decompressed
++	  "kernel"). Two things are then needed in start.S: the dirty
++	  D-cache lines left behind by that loader have to be written back
++	  before the caches are disabled, and single-character boot
++	  progress markers ('0'..'C') can be emitted through the UART-Lite
++	  registers the previous loader already set up.
++
++	  Never enable this for an image that is booted from flash: at SPL
++	  entry the cache is uninitialised, DRAM is not up and the UART is
++	  dead, so both would break the boot.
++
+ config ARCH_JZ47XX
+ 	bool "Support Ingenic JZ47xx"
+ 	select SUPPORT_SPL
+--- a/board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209.env
++++ b/board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209.env
+@@ -0,0 +1,70 @@
++# U-Boot environment for ZyXEL LTE3301-M209/Q222
++#
++# Flash layout:
++#   0x000000  u-boot (SPL + proper, 192K)
++#   0x030000  u-boot-env (64K)
++#   0x040000  firmware (FIT + squashfs, "denx,fit")
++#   0xFF0000  config (MAC + WiFi EEPROM, do not touch!)
++
++bootdelay=3
++baudrate=115200
++bootcmd=bootm 0xbc040000 || run autoflash
++bootargs=console=ttyS0,115200 rootfstype=squashfs
++
++loadaddr=0x80010000
++netloadaddr=0x81000000
++
++# Sanity magics checked before any flash erase/write (see chk_* below):
++#   spl_magic = first word of the bootloader (SPL entry, offset 0)
++#   fit_magic = FDT/FIT magic d00dfeed, little-endian in memory
++# A download is only written if it is the right kind of image; tftpboot
++# already guarantees the transfer was complete (it fails otherwise).
++spl_magic=1000013f
++fit_magic=edfe0dd0
++chk_factory=test "$filesize" = "ff0000" && setexpr v *$netloadaddr + 0 && test "$v" = "$spl_magic" && setexpr a $netloadaddr + 0x40000 && setexpr v *$a + 0 && test "$v" = "$fit_magic"
++
++# Never auto-boot what the DHCP server offers - netboot loads its own
++# initramfs FIT explicitly.
++autoload=no
++
++# Static defaults for the recovery LAN; dhcp overrides them on success
++# (netboot runs dhcp first, then tftpboot with whatever is set).
++ipaddr=192.168.123.254
++serverip=192.168.123.123
++tftpsrcp=69
++tftpdstp=69
++
++# Hold reset or WPS at boot (board.c points bootcmd here): fetch the whole
++# factory image over TFTP and rewrite the flash, then reboot. No read-back
++# verify - the 16 MiB image leaves no second RAM window below the U-Boot
++# relocation area; skip-identical and the FIT hashes guard the next boot.
++autoinstall=tftpboot $netloadaddr factory.bin && run chk_factory && sf probe && sf update $netloadaddr 0x0 $filesize && reset || echo "autoinstall: image incomplete or not a bootloader - flash skipped"
++
++# Partitions (flash offsets, kseg1: +0xbc000000)
++fw_addr=0x40000
++chk_fw=setexpr v *$netloadaddr + 0 && test "$v" = "$fit_magic"
++chk_uboot=setexpr v *$netloadaddr + 0 && test "$v" = "$spl_magic"
++fw_size=0xfb0000
++
++# Automatic fallback: boot the OpenWrt initramfs FIT from TFTP. Runs
++# entirely from RAM (SSH up, then sysupgrade/scp a new image).
++netboot=dhcp; tftpboot $netloadaddr zyxel_lte3301-m209-initramfs-kernel.bin && bootm $netloadaddr
++
++# Installation: when the firmware partition has no valid FIT (fresh
++# device after the bootloader was installed as a kernel), auto-flash
++# the firmware and then the bootloader from TFTP. Ordered for safety:
++# the firmware is written and verified first, the bootloader last, so
++# an interrupted run leaves jboot (or the old bootloader) intact and
++# the device recoverable. Each write is verified with a read-back and
++# a byte compare before the reset.
++# The read-back buffer is derived from the image size instead of being
++# hardcoded: a fixed address silently starts to overlap the download
++# buffer once the firmware grows, and the compare would then pass
++# against itself.
++autoflash=tftpboot $netloadaddr firmware-sysupgrade.bin && run chk_fw && sf probe && sf update $netloadaddr $fw_addr $filesize && setexpr vfyaddr $netloadaddr + $filesize && sf read $vfyaddr $fw_addr $filesize && cmp.b $netloadaddr $vfyaddr $filesize && tftpboot $netloadaddr uboot.bin && run chk_uboot && sf update $netloadaddr 0x0 $filesize && setexpr vfyaddr $netloadaddr + $filesize && sf read $vfyaddr 0x0 $filesize && cmp.b $netloadaddr $vfyaddr $filesize && reset || echo "autoflash: image incomplete or not a bootloader/firmware - flash skipped"
++
++# Manual TFTP recovery of the whole firmware partition (FIT + rootfs in
++# one file - the rootfs offset depends on the padded FIT size, so there
++# is no fixed rootfs address to flash separately):
++#   run flashrecovery
++flashrecovery=dhcp && tftpboot $netloadaddr firmware-sysupgrade.bin && sf probe && sf update $netloadaddr $fw_addr $filesize && reset
+--- a/arch/mips/dts/mediatek,mt7620-lte3301-m209.dts
++++ b/arch/mips/dts/mediatek,mt7620-lte3301-m209.dts
+@@ -0,0 +1,140 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ZyXEL LTE3301-M209 (MT7620N)
++ *
++ * Based on mt7620-rfb.dts (MediaTek Inc.).
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include "mt7620.dtsi"
++
++/ {
++	compatible = "zyxel,lte3301-m209", "mediatek,mt7620-soc";
++	model = "ZyXEL LTE3301-M209";
++
++	aliases {
++		serial0 = &uartlite;
++		spi0 = &spi0;
++	};
++
++	chosen {
++		stdout-path = &uartlite;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_power: power {
++			label = "power";
++			gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++		};
++
++		wan {
++			label = "wan";
++			gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		/* Pads 40-43 as gpio-LEDs like on the proven reference
++		 * (defined levels, no EPHY mode - the ESW would otherwise
++		 * drive possible modem strap lines). Pin 72 is deliberately
++		 * left untouched (unclaimed on the reference). */
++		mobile_green {
++			label = "mobile_green";
++			gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		mobile_red {
++			label = "mobile_red";
++			gpios = <&gpio2 1 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		mobile_lte {
++			label = "mobile_lte";
++			gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		switch_led {
++			label = "switch";
++			gpios = <&gpio2 3 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++	};
++
++	options {
++		u-boot {
++			/* Power LED on as soon as U-Boot runs (the kernel takes it over) */
++			boot-led = <&led_power>;
++		};
++	};
++};
++
++&uartlite {
++	status = "okay";
++};
++
++&pinctrl {
++	state_default: pin_state {
++		uart {
++			groups = "uartf";
++			function = "gpio";
++		};
++
++		/*
++		 * "ephy led" is bit 15 of GPIO1_MODE: without it the ESW
++		 * drives pads 40-44, which blinks the front LEDs on LAN
++		 * traffic and touches the modem strap lines. "wled" (bit 13)
++		 * frees pad 72 the same way the vendor loader does, although
++		 * nothing here drives that pad.
++		 *
++		 * "wdt rst" is the bits 21:22 field. The vendor loader leaves
++		 * it at 0 (reset output on pad 17), we select gpio like the
++		 * proven reference firmware does - the extra board LEDs only
++		 * work with it, verified on hardware.
++		 */
++		led {
++			groups = "ephy led", "wled", "wdt rst";
++			function = "gpio";
++		};
++
++		/*
++		 * GPIO 1 is the reset button. The pad comes up in gpio mode
++		 * after reset, selecting the group just stops that from being
++		 * an accident.
++		 */
++		button {
++			groups = "i2c";
++			function = "gpio";
++		};
++	};
++};
++
++&spi0 {
++	status = "okay";
++	num-cs = <2>;
++
++	spi-flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "jedec,spi-nor";
++		spi-max-frequency = <25000000>;
++		reg = <0>;
++	};
++};
++
++&eth {
++	status = "okay";
++
++	/*
++	 * Internal 5-port switch (4x FE-LAN + WAN, portmap "llllw"); the
++	 * EPHY LED pads (40-44) belong in GPIO mode, see pin_state above.
++	 * No "mediatek,poll-link-phy" here: only the mt7628 driver reads
++	 * that property, the mt7620 one takes PHY polling from the
++	 * phy-addr of a port4/port5 subnode.
++	 */
++};

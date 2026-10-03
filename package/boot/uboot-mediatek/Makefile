@@ -61,6 +61,38 @@ define U-Boot/mt7620_mt7530_rfb
   UBOOT_IMAGE:=u-boot-with-spl.bin
 endef
 
+define U-Boot/mt7620_lte3301_m209
+  NAME:=ZyXEL LTE3301-M209/Q222
+  UBOOT_CONFIG:=mt7620_lte3301_m209
+  BUILD_DEVICES:=zyxel_lte3301-m209 zyxel_lte3301-q222
+  BUILD_TARGET:=ramips
+  BUILD_SUBTARGET:=mt7620
+  UBOOT_IMAGE:=u-boot-with-spl.bin
+endef
+
+# Same binary as the production variant above, only linked for a different
+# RAM address so it can be loaded and started by the U-Boot that is already
+# running ("tftpboot 0x80400000 ...; go 0x80400000"). That is the mandatory
+# RAM test before a new bootloader is written to flash offset 0.
+define U-Boot/mt7620_lte3301_m209_chainload
+  NAME:=ZyXEL LTE3301-M209/Q222 (RAM chainload test)
+  UBOOT_CONFIG:=mt7620_lte3301_m209
+  UBOOT_CUSTOMIZE_CONFIG:=--set-val TEXT_BASE 0x80400000
+  BUILD_DEVICES:=zyxel_lte3301-m209 zyxel_lte3301-q222
+  BUILD_TARGET:=ramips
+  BUILD_SUBTARGET:=mt7620
+  UBOOT_IMAGE:=u-boot.bin
+endef
+
+define U-Boot/mt7620_lte3301_m209_autoinstall
+  NAME:=ZyXEL LTE3301-M209/Q222 (autoinstall)
+  UBOOT_CONFIG:=mt7620_lte3301_m209_autoinstall
+  BUILD_DEVICES:=zyxel_lte3301-m209 zyxel_lte3301-q222
+  BUILD_TARGET:=ramips
+  BUILD_SUBTARGET:=mt7620
+  UBOOT_IMAGE:=u-boot.bin
+endef
+
 define U-Boot/mt7621_rfb
   NAME:=MT7621 Reference Board
   UBOOT_CONFIG:=mt7621_rfb
@@ -1471,6 +1503,9 @@ endef
 
 UBOOT_TARGETS := \
 	mt7620_mt7530_rfb \
+	mt7620_lte3301_m209 \
+	mt7620_lte3301_m209_autoinstall \
+	mt7620_lte3301_m209_chainload \
 	mt7620_rfb \
 	mt7621_nand_rfb \
 	mt7621_rfb \
@@ -1643,6 +1678,14 @@ endif
 define Build/InstallDev
 	$(INSTALL_DIR) $(STAGING_DIR_IMAGE)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(UBOOT_IMAGE) $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-$(UBOOT_IMAGE)
+ifeq ($(BUILD_VARIANT),mt7620_lte3301_m209)
+	# Build the default environment blob that factory.bin carries at the
+	# env offset, so a freshly flashed device starts with a readable
+	# environment instead of whatever was left in that sector.
+	$(MAKE) -C $(PKG_BUILD_DIR) CROSS_COMPILE=$(TARGET_CROSS) $(if $(DTC),DTC="$(DTC)") envtools >/dev/null
+	$(PKG_BUILD_DIR)/tools/mkenvimage -s 0x1000 -o $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-uboot-env.bin \
+		$(PKG_BUILD_DIR)/board/mediatek/mt7620-lte3301-m209/mt7620-lte3301-m209.env
+endif
 endef
 
 $(eval $(call BuildPackage/U-Boot))
