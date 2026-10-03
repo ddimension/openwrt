@@ -1,0 +1,24 @@
+From: André Valentin <avalentin@marcant.net>
+Subject: env: sf: skip redundant read when no redundant offset is configured
+
+When CONFIG_ENV_OFFSET_REDUND is unset, ENV_OFFSET_REDUND is
+OFFSET_INVALID (0xffffffff) and env_sf_load() still performs the
+second SPI read at that offset. On some flashes this read has
+unwanted side effects (and it is pointless anyway). Skip it.
+
+--- a/env/sf.c
++++ b/env/sf.c
+@@ -184,8 +184,11 @@
+ 
+ 	read1_fail = spi_flash_read(env_flash, CONFIG_ENV_OFFSET,
+ 				    CONFIG_ENV_SIZE, tmp_env1);
+-	read2_fail = spi_flash_read(env_flash, CONFIG_ENV_OFFSET_REDUND,
+-				    CONFIG_ENV_SIZE, tmp_env2);
++	if (ENV_OFFSET_REDUND == OFFSET_INVALID)
++		read2_fail = 1;
++	else
++		read2_fail = spi_flash_read(env_flash, CONFIG_ENV_OFFSET_REDUND,
++					    CONFIG_ENV_SIZE, tmp_env2);
+ 
+ 	ret = env_import_redund((char *)tmp_env1, read1_fail, (char *)tmp_env2,
+ 				read2_fail, H_EXTERNAL);
