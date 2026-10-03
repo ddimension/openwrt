@@ -1,0 +1,37 @@
+#!/bin/sh /etc/rc.common
+# Import the vendor config values that U-Boot parsed from the jboot config
+# partition (board/mediatek/mt7620-lte3301-m209/board.c) into uci so that
+# user space (wwand, fleet management) can read them.
+
+START=95
+
+set_if_changed() {
+	local opt="$1" val="$2"
+
+	[ -n "$val" ] || return 0
+	[ "$(uci -q get "system.@system[0].$opt")" = "$val" ] && return 0
+	uci -q set "system.@system[0].$opt=$val"
+	changed=1
+}
+
+boot() {
+	local changed=0
+	local i
+
+	# On the very first boot the uboot-envtools uci-defaults may run
+	# after this script; wait briefly for /etc/fw_env.config.
+	for i in 1 2 3 4 5; do
+		[ -e /etc/fw_env.config ] && break
+		sleep 1
+	done
+	[ -e /etc/fw_env.config ] || return 0
+
+	set_if_changed jboot_subtype "$(fw_printenv -n jboot_subtype 2>/dev/null)"
+	set_if_changed jboot_model "$(fw_printenv -n jboot_model 2>/dev/null)"
+	set_if_changed jboot_serial "$(fw_printenv -n jboot_serial 2>/dev/null)"
+	set_if_changed jboot_build "$(fw_printenv -n jboot_build 2>/dev/null)"
+
+	# Only touch the flash overlay when something actually changed.
+	[ "$changed" = 1 ] && uci -q commit system
+	return 0
+}

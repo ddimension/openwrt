@@ -1657,3 +1657,62 @@ define Device/zyxel_keenetic-viva
   SUPPORTED_DEVICES += kng_rc
 endef
 TARGET_DEVICES += zyxel_keenetic-viva
+
+# Migration image in jboot record format (ZXL6): writes U-Boot to 0x0 and
+# kernel/rootfs at the U-Boot layout firmware offset (0x40000) when uploaded
+# via the jboot recovery web UI.
+# Pad with 0xff (erased flash) instead of the 0x00 that pad-to writes:
+# the jffs2 overlay must start out erased. Aborts instead of silently
+# truncating when the image already exceeds the target size.
+define Build/pad-to-ff
+	[ $$(stat -c%s $@) -le $$(($(call exp_units,$(1)))) ]
+	dd if=/dev/zero bs=$(1) count=1 2>/dev/null | tr '\000' '\377' >> $@
+	truncate -s $(1) $@
+endef
+
+define Build/append-u-boot-env
+	cat $(STAGING_DIR_IMAGE)/$(UBOOT)-uboot-env.bin >> $@
+endef
+
+define Build/jboot-image
+	$(STAGING_DIR_HOST)/bin/jbootimage -u $(UBOOT_PATH) -c $@ \
+		-s $$(stat -c%s $(IMAGE_KERNEL)) -f $(1) -O 0x40000 -o $@.new
+	mv $@.new $@
+endef
+
+# Both LTE3301 variants are the same board with a different vendor config
+# layout (base MAC offset), so everything but the device tree is shared.
+define Device/zyxel_lte3301
+  SOC := mt7620n
+  # firmware partition: 0x40000..0xFF0000
+  IMAGE_SIZE := 16064k
+  UBOOT_PATH := $(STAGING_DIR_IMAGE)/mt7620_lte3301_m209-u-boot-with-spl.bin
+  UBOOT := mt7620_lte3301_m209
+  IMAGES := factory.bin sysupgrade.bin uboot.bin u-boot-install.bin
+  IMAGE/factory.bin := append-uboot | pad-to 192k | append-u-boot-env | pad-to 256k | append-kernel | pad-to 64k | append-rootfs | pad-to-ff 16320k
+  IMAGE/sysupgrade.bin := append-kernel | pad-to 64k | append-rootfs | pad-rootfs | append-metadata | check-size
+  IMAGE/uboot.bin := append-uboot
+  IMAGE/u-boot-install.bin := append-kernel | pad-to 64k | append-rootfs | pad-to-ff 16064k | jboot-image 0xffff
+  DEVICE_VENDOR := ZyXEL
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport kmod-switch-rtl8366-smi kmod-switch-rtl8367b kmod-usb-net-qmi-wwan kmod-usb-serial-option zram-swap jboot-tools uboot-envtools
+endef
+
+define Device/zyxel_lte3301-m209
+  $(Device/zyxel_lte3301)
+  DEVICE_MODEL := LTE3301-M209
+  DEVICE_DTS := mt7620n_zyxel_lte3301-m209
+  KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  SUPPORTED_DEVICES += lte3301-m209
+endef
+TARGET_DEVICES += zyxel_lte3301-m209
+
+define Device/zyxel_lte3301-q222
+  $(Device/zyxel_lte3301)
+  DEVICE_MODEL := LTE3301-Q222
+  DEVICE_DTS := mt7620n_zyxel_lte3301-q222
+  KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  SUPPORTED_DEVICES += lte3301-q222
+endef
+TARGET_DEVICES += zyxel_lte3301-q222

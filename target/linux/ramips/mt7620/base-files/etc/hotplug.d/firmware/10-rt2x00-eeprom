@@ -36,6 +36,24 @@ case "$FIRMWARE" in
 		jboot_eeprom_extract "config" 0xE000
 		caldata_patch_data "${wifi_mac//:/}" 0x4
 		;;
+	zyxel,lte3301-m209|\
+	zyxel,lte3301-q222)
+		# The per-device calibration data lives in the jboot config
+		# partition. Its embedded MAC is the generic Ralink default, so
+		# patch in a device specific one (config MAC + 1; eth0 uses
+		# config MAC - 1, the modem WAN the config MAC itself).
+		# jboot_eeprom_extract would caldata_die on failure, so call the
+		# tool directly and fall back to the generic EEPROM instead.
+		mtd=$(find_mtd_part config)
+		if [ -n "$mtd" ] && \
+		   jboot_config_read -i "$mtd" -o 0xE000 -e /lib/firmware/$FIRMWARE 2>/dev/null; then
+			wifi_mac=$(jboot_config_read -m -i "$mtd" -o 0xE000)
+			[ -n "$wifi_mac" ] && \
+				caldata_patch_data "$(macaddr_add "$wifi_mac" 1 | tr -d :)" 0x4
+		else
+			cp /lib/firmware/mt7620_ap_2t2r.bin /lib/firmware/$FIRMWARE
+		fi
+		;;
 	dovado,tiny-ac)
 		wifi_mac=$(mtd_get_mac_ascii u-boot-env INIC_MAC_ADDR)
 		caldata_extract "factory" 0x0 0x200
